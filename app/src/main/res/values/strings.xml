@@ -1,0 +1,28 @@
+<!--
+  ~ Copyright (C)  2019 Kynetics, LLC
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+
+<resources>
+    <string name="app_name">CAN Test</string>
+    <string name="app_title">Kynetics CAN Test Application</string>
+    <string name="tab_text_1">Sender</string>
+    <string name="tab_text_2">Receiver</string>
+    <string name="configuration">configuration</string>
+    <string name="loopback">loopback</string>
+    <string name="receive_own_msgs">receive own msgs</string>
+    <string name="socket_raw">socket raw</string>
+    <string name="unbind">UNBIND</string>
+    <string name="bind">BIND</string>
+    <string name="frame">frame</string>
+    <string name="id">ID:</string>
+    <string name="data">DATA:</string>
+    <string name="rtr">RTR</string>
+    <string name="error">Error</string>
+    <string name="data_acquisition">data acquisition</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="press_start_acquisition">Press START to begin acquisition</string>
+    <string name="data_">Data</string>
+    <string name="no_can_interfaces_found">No can interfaces found</string>
+</resources>
