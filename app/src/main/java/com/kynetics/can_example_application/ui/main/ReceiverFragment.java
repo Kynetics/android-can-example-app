@@ -90,6 +90,10 @@ public class ReceiverFragment extends Fragment {
             Snackbar.make(root, "RAW socket created", Snackbar.LENGTH_SHORT)
                     .show();
         }
+        else {
+            /* Error occurred when creating/binding socket, disable interface */
+            return inflater.inflate(R.layout.dialog_no_permissions, container, false);
+        }
 
         /* Setup socket state */
         socketStatusTextview.setText(bindedStr);
@@ -109,6 +113,9 @@ public class ReceiverFragment extends Fragment {
                         } catch (IOException e) {
                             Log.e(TAG, "Error creating socket");
                             e.printStackTrace();
+                            Snackbar.make(root, "Error creating socket", Snackbar.LENGTH_SHORT)
+                                    .show();
+                            return;
                         }
                     }
 
@@ -122,6 +129,7 @@ public class ReceiverFragment extends Fragment {
                         e.printStackTrace();
                         Snackbar.make(root, "Error binding socket", Snackbar.LENGTH_SHORT)
                                 .show();
+                        return;
                     }
                     Snackbar.make(root, "Socket created and binded!", Snackbar.LENGTH_SHORT)
                             .show();
@@ -139,6 +147,7 @@ public class ReceiverFragment extends Fragment {
                         e.printStackTrace();
                         Snackbar.make(root, "Error closing socket", Snackbar.LENGTH_SHORT)
                                 .show();
+                        return;
                     }
                     Snackbar.make(root, "Socket closed", Snackbar.LENGTH_SHORT)
                             .show();
