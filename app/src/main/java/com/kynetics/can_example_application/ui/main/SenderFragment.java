@@ -240,17 +240,12 @@ public class SenderFragment extends Fragment {
 
                 /* Configure frame type */
                 int frameTypeIdx = frameTypeRadiogroup.getCheckedRadioButtonId();
-                switch (frameTypeIdx)
-                {
-                    case R.id.radioButton_dataFrame:
-                        break;
-                    case R.id.radioButton_rtrFrame:
-                        frameId.setRTR();
-                        break;
-                    case R.id.radioButton_errFrame:
-                        frameId.setERR();
-                        break;
-                }
+
+                if (frameTypeIdx == R.id.radioButton_rtrFrame)
+                    frameId.setRTR();
+                else if (frameTypeIdx == R.id.radioButton_errFrame)
+                    frameId.setERR();
+
                 Log.i(TAG, "RTR: " + (frameId.isSetRTR() ? "1" : "0") + ", ERR: " + (frameId.isSetERR() ? "1" : "0"));
 
                 /* Get frame data */
