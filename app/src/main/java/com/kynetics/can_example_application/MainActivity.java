@@ -15,6 +15,7 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -29,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
+
     private static String TAG = "KyneticsCanExampleApplication:MainActivity";
 
     @Override
@@ -36,60 +38,84 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog, null);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        if (viewPager.getAdapter() == null) {
+            showStartDialog();
+        }
+    }
+
+    private void showStartDialog() {
         /* Setup list of can interfaces */
         List<String> netDevices = findCanDevices();
         if (netDevices.size() == 0) {
-            dialogView = inflater.inflate(R.layout.dialog_no_ifaces, null);
-            new AlertDialog.Builder(this)
-                    .setView(dialogView)
-                    .setNegativeButton("Close",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    finish();
-                                }
-                            })
-                    .setOnDismissListener(
-                            new AlertDialog.OnDismissListener() {
-
-                                @Override
-                                public void onDismiss(DialogInterface dialogInterface) {
-                                    finish();
-                                }
-                            })
-                    .show();
+            showErrorDialog();
         } else {
-            final Spinner dropdown = dialogView.findViewById(R.id.spinner_canIfaces);
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, netDevices);
-            dropdown.setAdapter(adapter);
-
-            /* Setup dialog */
-            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
-                    .setView(dialogView)
-                    .setCancelable(false);
-
-            dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Log.d(TAG, dropdown.getSelectedItem().toString() + " selected");
-                    SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
-                            getApplicationContext(),
-                            getSupportFragmentManager(),
-                            dropdown.getSelectedItem().toString());
-                    ViewPager viewPager = findViewById(R.id.view_pager);
-                    viewPager.setAdapter(sectionsPagerAdapter);
-                    TabLayout tabs = findViewById(R.id.tabs);
-                    tabs.setupWithViewPager(viewPager);
-                }
-            });
-
-            final AlertDialog dialog = dialogBuilder.create();
-            dialog.show();
+            showCanInterfacesListDialog(netDevices);
         }
+    }
+
+    private void showErrorDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_no_ifaces, null);
+        new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setNegativeButton("Close",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        })
+                .setOnDismissListener(
+                        new AlertDialog.OnDismissListener() {
+
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                finish();
+                            }
+                        })
+                .show();
+    }
+
+    private void showCanInterfacesListDialog(final List<String> netDevices) {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog, null);
+        final Spinner dropdown = dialogView.findViewById(R.id.spinner_canIfaces);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, netDevices);
+        dropdown.setAdapter(adapter);
+
+        /* Setup dialog */
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false);
+
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d(TAG, dropdown.getSelectedItem().toString() + " selected");
+                SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
+                        getApplicationContext(),
+                        getSupportFragmentManager(),
+                        dropdown.getSelectedItem().toString());
+                ViewPager viewPager = findViewById(R.id.view_pager);
+                viewPager.setAdapter(sectionsPagerAdapter);
+                TabLayout tabs = findViewById(R.id.tabs);
+                tabs.setupWithViewPager(viewPager);
+            }
+        });
+
+        final AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     private static List<String> findCanDevices() {
