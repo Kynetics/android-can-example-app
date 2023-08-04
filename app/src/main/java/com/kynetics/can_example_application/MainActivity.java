@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -116,6 +118,21 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_recreate) {
+            recreate();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static List<String> findCanDevices() {

@@ -26,4 +26,5 @@
     <string name="data_">Data</string>
     <string name="no_can_interfaces_found">No can interfaces found</string>
     <string name="insufficient_permissions_on_this_device">insufficient permissions on this device</string>
+    <string name="menu_restart">restart</string>
 </resources>
