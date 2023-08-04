@@ -6,6 +6,7 @@
 package com.kynetics.can_example_application;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (netDevices == null) {
             showErrorDialog(R.layout.dialog_no_permissions);
-        } else if (netDevices.isEmpty()){
+        } else if (netDevices.isEmpty()) {
             showErrorDialog(R.layout.dialog_no_ifaces);
         } else {
             showCanInterfacesListDialog(netDevices);
@@ -72,21 +72,12 @@ public class MainActivity extends AppCompatActivity {
         View dialogView = getLayoutInflater().inflate(layout, null);
         new AlertDialog.Builder(this)
                 .setView(dialogView)
-                .setNegativeButton("Close",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
-                            }
-                        })
-                .setOnDismissListener(
-                        new AlertDialog.OnDismissListener() {
-
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                finish();
-                            }
-                        })
+                .setNegativeButton("Close", (dialogInterface, i) ->
+                        finish())
+                .setNeutralButton(R.string.menu_about, (dialogInterface, i) ->
+                        startAboutActivity())
+                .setOnCancelListener(dialogInterface ->
+                        finish())
                 .show();
     }
 
@@ -119,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        dialogBuilder.setNeutralButton(R.string.menu_about,
+                (dialogInterface, i) -> startAboutActivity());
+
         final AlertDialog dialog = dialogBuilder.create();
         dialog.show();
     }
@@ -134,8 +128,16 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_recreate) {
             recreate();
             return true;
+        } else if (item.getItemId() == R.id.menu_about) {
+            startAboutActivity();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startAboutActivity() {
+        Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+        startActivity(intent);
     }
 
     private static List<String> findCanDevices() {

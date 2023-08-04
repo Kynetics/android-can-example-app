@@ -26,5 +26,17 @@
     <string name="data_">Data</string>
     <string name="no_can_interfaces_found">No can interfaces found</string>
     <string name="insufficient_permissions_on_this_device">insufficient permissions on this device</string>
+    <string name="menu_about">About</string>
+    <string name="about_text">CAN socket Android SDK extension example application \n\n
+        This application serves as a reference implementation of Kynetics\' CAN socket Android SDK Extension library. \n\n
+
+        To learn more about SDK Extension licensing please visit:\n
+        <a href="https://www.kynetics.com/android-sdk-extensions">https://www.kynetics.com/android-sdk-extensions</a>\n\n
+
+        Application source code is available under Apache v2.0 licence at:\n
+        <a href="https://github.com/Kynetics/android-can-example-app">https://github.com/Kynetics/android-can-example-app</a>\n\n
+
+    </string>
+    <string name="about_copyright">Copyright © 2019 - 2023  Kynetics  LLC</string>
     <string name="menu_restart">restart</string>
 </resources>

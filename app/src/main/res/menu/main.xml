@@ -4,7 +4,14 @@
 
     <item
         android:id="@+id/menu_recreate"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_restart"/>
+        android:orderInCategory="0"
+        android:title="@string/menu_restart"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:orderInCategory="1"
+        android:title="@string/menu_about"
+        app:showAsAction="ifRoom" />
 
 </menu>
