@@ -58,15 +58,18 @@ public class MainActivity extends AppCompatActivity {
     private void showStartDialog() {
         /* Setup list of can interfaces */
         List<String> netDevices = findCanDevices();
-        if (netDevices.size() == 0) {
-            showErrorDialog();
+
+        if (netDevices == null) {
+            showErrorDialog(R.layout.dialog_no_permissions);
+        } else if (netDevices.isEmpty()){
+            showErrorDialog(R.layout.dialog_no_ifaces);
         } else {
             showCanInterfacesListDialog(netDevices);
         }
     }
 
-    private void showErrorDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_no_ifaces, null);
+    private void showErrorDialog(int layout) {
+        View dialogView = getLayoutInflater().inflate(layout, null);
         new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .setNegativeButton("Close",
