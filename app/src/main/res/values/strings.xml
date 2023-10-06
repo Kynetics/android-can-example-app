@@ -4,8 +4,8 @@
   -->
 
 <resources>
-    <string name="app_name">CAN Test</string>
-    <string name="app_title">Kynetics CAN Test Application</string>
+    <string name="app_name">CAN Handler</string>
+    <string name="app_title">Kynetics CAN Handler Application</string>
     <string name="tab_text_1">Sender</string>
     <string name="tab_text_2">Receiver</string>
     <string name="configuration">configuration</string>
