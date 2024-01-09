@@ -1,3 +1,5 @@
+import java.util.function.Predicate
+
 /*
  * Copyright (C)  2019 - 2023 Kynetics, LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -18,10 +20,45 @@ android {
         versionName "1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    def KyneticsKeystorePass = System.getenv("KYNETICS_KEYSTORE_PASS")
+    def KyneticsKeyAlias = System.getenv("KYNETICS_KEY_ALIAS")
+    def KyneticsKeyPass = System.getenv("KYNETICS_KEY_PASS")
+
+    def envs= [KyneticsKeystorePass, KyneticsKeyAlias, KyneticsKeyPass]
+    def signWithKyneticsKey = envs.stream().allMatch(new Predicate<String>() {
+        @Override
+        boolean test(String s) {
+            return s != null && !s.isEmpty()
+        }
+    })
+
+    signingConfigs{
+        if (signWithKyneticsKey) {
+            kynetics {
+                storePassword KyneticsKeystorePass
+                keyAlias KyneticsKeyAlias
+                keyPassword KyneticsKeyPass
+                storeFile file('../keystore/kynetics.jks')
+                v2SigningEnabled true
+                v1SigningEnabled true
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        if (signWithKyneticsKey) {
+            kynetics_key {
+                signingConfig signingConfigs.kynetics
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                matchingFallbacks = ['release', 'debug']
+            }
         }
     }
 }
