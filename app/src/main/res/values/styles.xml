@@ -13,6 +13,7 @@
         <item name="colorAccent">#00acc1</item>
         <item name="android:textColorPrimary">#212121</item>
         <item name="android:textColorSecondary">#757575</item>
+        <item name="android:colorBackground">#EBEEF4</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -115,11 +115,6 @@
                             android:textAllCaps="true" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardview_row2_col1"
@@ -211,10 +206,10 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
             </TableRow>
 
             <TableRow>
-
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardview_receive_msgs"
