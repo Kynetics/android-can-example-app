@@ -13,7 +13,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.kynetics.can_example_application"
-        minSdkVersion 19
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 5
@@ -64,7 +64,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

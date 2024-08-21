@@ -24,11 +24,16 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.kynetics.android.sdk.can.api.CanFrame;
+import com.kynetics.android.sdk.can.api.CanId;
+import com.kynetics.android.sdk.can.api.CanIdFactory;
+import com.kynetics.android.sdk.can.api.CanInterface;
+import com.kynetics.android.sdk.can.api.CanMode;
+import com.kynetics.android.sdk.can.api.CanSdkManagerFactory;
 import com.kynetics.can_example_application.R;
 
 import java.io.IOException;
-
-import de.entropia.can.CanSocket;
+import com.kynetics.android.sdk.can.api.CanSdkManager;
 
 /**
  * Fragment containing the CAN sender view.
@@ -40,8 +45,8 @@ public class SenderFragment extends Fragment {
     private static final String bindedStr = "binded";
     private static final int bindedColor = Color.parseColor("#8fbbaf");
     private static String TAG = "KyneticsCanExampleApplication:SenderFragment";
-    private static CanSocket socket;
-    private static CanSocket.CanInterface canIf;
+    private static CanSdkManager mSdkManager;
+    private static CanInterface canIf;
     private TextView socketStatusTextview;
     private ToggleButton bindBtn;
     private CheckBox loopbackCheckbox;
@@ -68,9 +73,9 @@ public class SenderFragment extends Fragment {
         }
         /* Create socket */
         try {
-            socket = new CanSocket(CanSocket.Mode.RAW);
-            canIf = new CanSocket.CanInterface(socket, getArguments().getString(ARG_CAN_IFACE));
-            socket.bind(canIf);
+            mSdkManager = CanSdkManagerFactory.INSTANCE.getInstance(CanMode.RAW);
+            canIf = new CanInterface(mSdkManager, getArguments().getString(ARG_CAN_IFACE));
+            mSdkManager.bind(canIf);
             Log.i(TAG, "RAW socket created");
             Log.d(TAG, canIf.toString());
         } catch (IOException e) {
@@ -95,7 +100,7 @@ public class SenderFragment extends Fragment {
         frameDataEdittext = root.findViewById(R.id.editText_frameData);
         sendFab = root.findViewById(R.id.fabSend);
 
-        if (socket != null) {
+        if (mSdkManager != null) {
             Snackbar.make(root, "RAW socket created", Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -114,9 +119,9 @@ public class SenderFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    if (socket == null) {
+                    if (mSdkManager == null) {
                         try {
-                            socket = new CanSocket(CanSocket.Mode.RAW);
+                            mSdkManager = CanSdkManagerFactory.INSTANCE.getInstance(CanMode.RAW);
                             Log.i(TAG, "RAW socket created");
                             Log.d(TAG, canIf.toString());
                         } catch (IOException e) {
@@ -129,7 +134,7 @@ public class SenderFragment extends Fragment {
                     }
 
                     try {
-                        socket.bind(canIf);
+                        mSdkManager.bind(canIf);
                         socketStatusTextview.setText(bindedStr);
                         socketStatusTextview.setTextColor(bindedColor);
                         Log.i(TAG, "Socket binded");
@@ -144,8 +149,8 @@ public class SenderFragment extends Fragment {
                             .show();
                 } else {
                     try {
-                        socket.close();
-                        socket = null;
+                        mSdkManager.close();
+                        mSdkManager = null;
                         socketStatusTextview.setText(notBindedStr);
                         socketStatusTextview.setTextColor(notBindedColor);
                         Log.i(TAG, "Socket closed");
@@ -166,7 +171,7 @@ public class SenderFragment extends Fragment {
         loopbackCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (socket == null) {
+                if (mSdkManager == null) {
                     loopbackCheckbox.setChecked(!isChecked);
                     Log.e(TAG, "Bind socket first!");
                     Snackbar.make(getView(), "Bind socket first!", Snackbar.LENGTH_SHORT)
@@ -174,8 +179,8 @@ public class SenderFragment extends Fragment {
                     return;
                 }
                 try {
-                    socket.setLoopbackMode(isChecked);
-                    Log.d(TAG, "Loopback mode: " + (socket.getLoopbackMode() ? "enabled" : "disabled"));
+                    mSdkManager.setLoopbackMode(isChecked);
+                    Log.d(TAG, "Loopback mode: " + (mSdkManager.getLoopbackMode() ? "enabled" : "disabled"));
                 } catch (IOException e) {
                     Snackbar.make(getView(), "Error setting loopback mode", Snackbar.LENGTH_SHORT)
                             .show();
@@ -187,7 +192,7 @@ public class SenderFragment extends Fragment {
         rcvOwnMsgCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (socket == null) {
+                if (mSdkManager == null) {
                     rcvOwnMsgCheckbox.setChecked(!isChecked);
                     Log.e(TAG, "Bind socket first!");
                     Snackbar.make(getView(), "Bind socket first!", Snackbar.LENGTH_SHORT)
@@ -195,8 +200,8 @@ public class SenderFragment extends Fragment {
                     return;
                 }
                 try {
-                    socket.setRecvOwnMsgsMode(isChecked);
-                    Log.d(TAG, "Receive own messages: " + (socket.getRecvOwnMsgsMode() ? "enabled" : "disabled"));
+                    mSdkManager.setReceiveOwnMessagesMode(isChecked);
+                    Log.d(TAG, "Receive own messages: " + (mSdkManager.getReceiveOwnMessagesMode() ? "enabled" : "disabled"));
                 } catch (IOException e) {
                     Snackbar.make(getView(), "Error setting receive own messages mode", Snackbar.LENGTH_SHORT)
                             .show();
@@ -209,7 +214,7 @@ public class SenderFragment extends Fragment {
         sendFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (socket == null) {
+                if (mSdkManager == null) {
                     Log.e(TAG, "Bind socket first!");
                     Snackbar.make(getView(), "Bind socket first!", Snackbar.LENGTH_SHORT)
                             .show();
@@ -235,7 +240,8 @@ public class SenderFragment extends Fragment {
                     return;
                 }
 
-                CanSocket.CanId frameId = new CanSocket.CanId(reqCanId);
+                CanId frameId = CanIdFactory.INSTANCE.newInstance(reqCanId);
+
                 Log.d(TAG, "Frame ID: " + frameId);
 
                 /* Configure frame type */
@@ -258,16 +264,16 @@ public class SenderFragment extends Fragment {
                     return;
                 }
 
-                CanSocket.CanFrame frame = new CanSocket.CanFrame(canIf, frameId, reqData.getBytes());
+                CanFrame frame = new CanFrame(canIf, frameId, reqData.getBytes());
                 Log.d(TAG, frame.toString());
 
                 /* Send data frame */
                 try {
-                    socket.send(frame);
-
+                    mSdkManager.send(frame);
                     Toast.makeText(getContext(), "Data sent", Toast.LENGTH_SHORT)
                             .show();
                 } catch (IOException e) {
+                    e.printStackTrace();
                     Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG)
                             .show();
                 }
@@ -280,10 +286,10 @@ public class SenderFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (socket != null)
+        if (mSdkManager != null)
         {
             try {
-                socket.close();
+                mSdkManager.close();
                 Log.i(TAG, "Socket closed.");
             } catch (IOException e) {
                 Log.e(TAG, "Error closing socket.");

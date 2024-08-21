@@ -21,11 +21,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.kynetics.android.sdk.can.api.CanFrame;
+import com.kynetics.android.sdk.can.api.CanInterface;
+import com.kynetics.android.sdk.can.api.CanMode;
+import com.kynetics.android.sdk.can.api.CanSdkManager;
+import com.kynetics.android.sdk.can.api.CanSdkManagerFactory;
 import com.kynetics.can_example_application.R;
 
 import java.io.IOException;
-
-import de.entropia.can.CanSocket;
 
 /**
  * Fragment containing the CAN receiver view.
@@ -37,8 +40,8 @@ public class ReceiverFragment extends Fragment {
     private static final int notBindedColor = Color.parseColor("#ff8364");
     private static final int bindedColor = Color.parseColor("#8fbbaf");
     private static String TAG = "KyneticsCanExampleApplication:ReceiverFragment";
-    private static CanSocket socket;
-    private static CanSocket.CanInterface canIf;
+    private static CanSdkManager mCanSdkManager;
+    private static CanInterface canIf;
     private static recvCanMsgAsyncTask rcvTask;
     private ToggleButton acquisitionToggleButton;
     private ProgressBar acquisitionProgressBar;
@@ -62,9 +65,9 @@ public class ReceiverFragment extends Fragment {
         }
         /* Create socket */
         try {
-            socket = new CanSocket(CanSocket.Mode.RAW);
-            canIf = new CanSocket.CanInterface(socket, getArguments().getString(ARG_CAN_IFACE));
-            socket.bind(canIf);
+            mCanSdkManager = CanSdkManagerFactory.INSTANCE.getInstance(CanMode.RAW);
+            canIf = new CanInterface(mCanSdkManager, getArguments().getString(ARG_CAN_IFACE));
+            mCanSdkManager.bind(canIf);
             Log.i(TAG, "RAW socket created");
             Log.d(TAG, canIf.toString());
         } catch (IOException e) {
@@ -86,7 +89,7 @@ public class ReceiverFragment extends Fragment {
         canMessageTextview = root.findViewById(R.id.textView_canMessages);
         acquisitionProgressBar = root.findViewById(R.id.progressBar_acquisition);
 
-        if (socket != null) {
+        if (mCanSdkManager != null) {
             Snackbar.make(root, "RAW socket created", Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -105,9 +108,9 @@ public class ReceiverFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    if (socket == null) {
+                    if (mCanSdkManager == null) {
                         try {
-                            socket = new CanSocket(CanSocket.Mode.RAW);
+                            mCanSdkManager = CanSdkManagerFactory.INSTANCE.getInstance(CanMode.RAW);
                             Log.i(TAG, "RAW socket created");
                             Log.d(TAG, canIf.toString());
                         } catch (IOException e) {
@@ -120,7 +123,7 @@ public class ReceiverFragment extends Fragment {
                     }
 
                     try {
-                        socket.bind(canIf);
+                        mCanSdkManager.bind(canIf);
                         socketStatusTextview.setText(bindedStr);
                         socketStatusTextview.setTextColor(bindedColor);
                         Log.i(TAG, "Socket binded");
@@ -137,8 +140,8 @@ public class ReceiverFragment extends Fragment {
                     try {
                         if (rcvTask != null)
                             rcvTask.cancel(true);
-                        socket.close();
-                        socket = null;
+                        mCanSdkManager.close();
+                        mCanSdkManager = null;
                         socketStatusTextview.setText(notBindedStr);
                         socketStatusTextview.setTextColor(notBindedColor);
                         Log.i(TAG, "Socket closed");
@@ -160,7 +163,7 @@ public class ReceiverFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    if (socket == null) {
+                    if (mCanSdkManager == null) {
                         Log.e(TAG, "Bind socket first!");
                         Snackbar.make(root, "Bind socket first!", Snackbar.LENGTH_SHORT)
                                 .show();
@@ -182,9 +185,9 @@ public class ReceiverFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (socket != null) {
+        if (mCanSdkManager != null) {
             try {
-                socket.close();
+                mCanSdkManager.close();
                 Log.i(TAG, "Socket closed.");
             } catch (IOException e) {
                 Log.e(TAG, "Error closing socket.");
@@ -197,12 +200,12 @@ public class ReceiverFragment extends Fragment {
 
         protected Void doInBackground(Void... params) {
             int rcvTimeoutSec = 2;
-            CanSocket.CanFrame rcvFrame = null;
+            CanFrame rcvFrame = null;
             Log.d(TAG, "Listening...");
             String frameMsg;
             while (!isCancelled()) {
                 try {
-                    rcvFrame = socket.recv(rcvTimeoutSec);
+                    rcvFrame = mCanSdkManager.receive(rcvTimeoutSec);
                     publishProgress(rcvFrame.toString() +
                             "\t" + " - [ASCII: " + new String(rcvFrame.getData()) + "]\n");
                     Log.d(TAG, "Frame received");
