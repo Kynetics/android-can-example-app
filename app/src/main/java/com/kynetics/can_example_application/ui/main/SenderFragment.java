@@ -103,6 +103,18 @@ public class SenderFragment extends Fragment {
         if (mSdkManager != null) {
             Snackbar.make(root, "RAW socket created", Snackbar.LENGTH_SHORT)
                     .show();
+            try {
+                boolean isLoopbackEnabled = mSdkManager.getLoopbackMode();
+                loopbackCheckbox.setChecked(isLoopbackEnabled);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                boolean isRcvOwnMsgEnabled = mSdkManager.getReceiveOwnMessagesMode();
+                rcvOwnMsgCheckbox.setChecked(isRcvOwnMsgEnabled);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else {
             /* Error occurred when creating/binding socket, disable interface */
@@ -112,6 +124,7 @@ public class SenderFragment extends Fragment {
         /* Setup socket state */
         socketStatusTextview.setText(bindedStr);
         socketStatusTextview.setTextColor(bindedColor);
+
 
         /* Setup bind/unbind button */
         bindBtn.setChecked(true);
