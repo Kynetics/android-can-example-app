@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    ~ Copyright © 2019 - 2025  Kynetics, Inc.
+    ~ SPDX-License-Identifier: Apache-2.0
+    -->
 <resources>
     <color name="ic_launcher_background">#D8A491</color>
 </resources>

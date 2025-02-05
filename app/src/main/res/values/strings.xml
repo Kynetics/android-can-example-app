@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright © 2019 - 2024  Kynetics, Inc.
+  ~ Copyright © 2019 - 2025  Kynetics, Inc.
   ~ SPDX-License-Identifier: Apache-2.0
   -->
 
@@ -39,6 +39,6 @@
         <a href="https://github.com/Kynetics/android-can-example-app">https://github.com/Kynetics/android-can-example-app</a>\n\n
 
     </string>
-    <string name="about_copyright">Copyright © 2019 – 2024  Kynetics, Inc.</string>
+    <string name="about_copyright">Copyright © 2019 – 2025  Kynetics, Inc.</string>
     <string name="menu_restart">restart</string>
 </resources>
